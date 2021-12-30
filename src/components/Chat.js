@@ -8,10 +8,9 @@ import { firebaseConfig } from '../firebase';
 import { initializeApp } from "firebase/app";
 import { collection, doc, getDoc, getDocs, getFirestore, Timestamp, query, orderBy } from "firebase/firestore"; 
 import {useCollection, useDocument} from "react-firebase-hooks/firestore";
-import { useSelector } from "react-redux"
 import { selectRoomId, selectRoomName, selectRoomMessage } from '../features/appSlice'
-import {appendMessage} from "../features/appSlice";
-import { useDispatch } from "react-redux";
+import { createRoom, appendMessage} from "../features/appSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function Chat({websocket, userMongo, newMsg}) {
     const dispatch = useDispatch();
@@ -47,34 +46,41 @@ export default function Chat({websocket, userMongo, newMsg}) {
  
     React.useEffect(function effectFunction() {
         async function fetchMessages(){
-            var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/messages`)
-            var params = {room_id:roomId}
-            console.log("Chat.js - roomID", roomId)
-            url.search = new URLSearchParams(params).toString();
-                
-            const response = await fetch(url);
-            const json = await response.json();
-            console.log("response messages : ", json["data"])
+            if ( !roomMessages[roomId] ){
+                dispatch(createRoom({
+                    roomId: roomId,
+                }))        
+            }
+            if (roomMessages[roomId].length === 0){
 
-            // var httpMessages = json["data"].slice()
-            // if(JSON.stringify(newMsg) !== '{}'){
-            //     httpMessages.push(newMsg) 
-            //     console.log("APPEND newMsg: ", httpMessages)
-            // }
-
-            // updateRoomMessages(httpMessages);
-            // updateRoomMessages(json["data"]);
-            json["data"].map((msg)=>{
-                console.log(`json["data"]: `, msg)
-                dispatch(appendMessage({
-                    newMsg: msg,
-                }))
+                var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/messages`)
+                var params = {room_id:roomId}
+                console.log("Chat.js - roomID", roomId)
+                url.search = new URLSearchParams(params).toString();
+                    
+                const response = await fetch(url);
+                const json = await response.json();
+                console.log("response messages : ", json["data"])
     
-            })
-        
+                // var httpMessages = json["data"].slice()
+                // if(JSON.stringify(newMsg) !== '{}'){
+                //     httpMessages.push(newMsg) 
+                //     console.log("APPEND newMsg: ", httpMessages)
+                // }
+    
+                // updateRoomMessages(httpMessages);
+                // updateRoomMessages(json["data"]);
+                json["data"].map((msg)=>{
+                    console.log(`json["data"].map(msg): `, msg)
+                    dispatch(appendMessage({
+                        roomId: roomId, 
+                        newMsg: msg,
+                    }))        
+                })
+            }    
         }
         fetchMessages();
-    }, [roomId]); 
+    }, [roomId, dispatch, roomMessages]); 
     // second parameter is dependency: effect will activate if the value in the list change
     useEffect(()=>{
         chatRef?.current?.scrollIntoView({
@@ -109,7 +115,7 @@ export default function Chat({websocket, userMongo, newMsg}) {
 
     return (
         <ChatContainer>
-            {roomId && roomName && (
+            {roomId && roomName && roomMessages && (
                 <>
                 <Header>
                     <HeaderLeft>
@@ -151,13 +157,13 @@ export default function Chat({websocket, userMongo, newMsg}) {
                     } */}
                     {/* this to handle backend data */}
                     {
-                        roomMessages?<>Yes available</>:<>Not availabe</>
+                        roomMessages[roomId]?<>Yes available</>:<>Not availabe</>
                             
                     }
                     { 
                         // roomMessages could be undefined because async, 
                         // so only executed if available, otherwise it will throw error
-                        roomMessages?.map((chat) => {
+                        roomMessages[roomId]?.map((chat) => {
                             // doc.data() is never undefined for query doc snapshots
                             // const {message, user_id, room_id, username, user_image, timestamp} = chat.data();
                             // const chatMessage = {id:doc.id, message:message, timestamp:timestamp, user:user, userImage:userImage};

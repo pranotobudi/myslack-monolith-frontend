@@ -5,7 +5,7 @@ export const appSlice = createSlice({
   initialState: {
     roomId: null,
     roomName: "",
-    roomMessages: [],
+    roomMessages: {},
     
   },
   // The `reducers` field lets us define reducers and generate associated actions
@@ -25,14 +25,48 @@ export const appSlice = createSlice({
       // doesn't actually mutate the state because it uses the Immer library,
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
-      state.roomMessages.push(action.payload.newMsg);
-      console.log("appSlice-state.roomMessages: " + state.roomMessages.toString())
+      // action.payload.roomId
+      // action.payload.newMsg
+      console.log("appSlice-state.roomMessages payload roomId: " + action.payload.roomId)
+      console.log("appSlice-state.roomMessages payload newMsg: " + action.payload.newMsg)
+      // don't need to create room, has been handle by createRoom action
+      // if (!state.roomMessages.hasOwnProperty(action.payload.roomId)){
+      //   console.log("create room with roomId... ")
+      //   state.roomMessages[action.payload.roomId] = new Array()
+      // }
+      if (state.roomMessages.hasOwnProperty(action.payload.roomId)){
+        // console.log("room with roomId created... ")
+        // console.log("type: ", typeof state.roomMessages[action.payload.roomId])
+        // console.log("type array: ", Array.isArray(state.roomMessages[action.payload.roomId]))
+        // console.log("current array: ", state.roomMessages[action.payload.roomId])
+        // state.roomMessages[action.payload.roomId] = []
+        state.roomMessages[action.payload.roomId].push(action.payload.newMsg);
+        // console.log("length: ", state.roomMessages[action.payload.roomId].length)
+        // state.roomMessages[action.payload.roomId].map((elmt, index)=>{
+        //   console.log("index:", index, " each element: ", elmt)
+        // })
+      }
+      // state.roomMessages.push(action.payload.newMsg);
+      console.log("appSlice-state.roomMessages ", action.payload.roomId)
+      console.log(state.roomMessages[action.payload.roomId])
       // console.log("appSlice-state.roomName: "+state.roomName)
     },
+    createRoom: (state, action) => {
+      // Redux Toolkit allows us to write "mutating" logic in reducers. It
+      // doesn't actually mutate the state because it uses the Immer library,
+      // which detects changes to a "draft state" and produces a brand new
+      // immutable state based off those changes
+      // action.payload.roomId
+      // action.payload.newMsg
+      state.roomMessages[action.payload.roomId] = new Array()
+      console.log("appSlice-state.createRoom: ", state.roomMessages[action.payload.roomId])
+      // console.log("appSlice-state.roomName: "+state.roomName)
+    },
+
   },
 });
 
-export const { enterRoom, appendMessage } = appSlice.actions;
+export const { enterRoom, createRoom, appendMessage } = appSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

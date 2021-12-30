@@ -14,7 +14,8 @@ import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from './firebase';
 import Spinner from 'react-spinkit'
 import {appendMessage} from "./features/appSlice";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { selectRoomId } from './features/appSlice'
 
 // import your route components too
 
@@ -28,6 +29,7 @@ function App() {
   const [userMongo, updateUserMongo] = React.useState();
   // const [newMsg, updateNewMsg] = React.useState();
   const dispatch = useDispatch();
+  const roomId = useSelector(selectRoomId);
 
   React.useEffect(function effectFunction() {
       async function fetchUser(){
@@ -85,6 +87,7 @@ function App() {
         return
       }
       dispatch(appendMessage({
+        roomId: roomId,
         newMsg: JSON.parse(ev.data),
       }))
 
