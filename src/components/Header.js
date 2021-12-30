@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SearchIcon from '@mui/icons-material/Search';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -9,14 +8,12 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
 
 export default function Header() {
+    console.log("Header comp")
 
     const [user] = useAuthState(auth);
-    console.log("Header comp")
-    // console.log("user photoURL:", user.photoURL);
-    // console.log("user displayName:", user.displayName);
     const signOutHandler = (e) => {
         auth.signOut();
-        console.log("onClick event");
+        console.log("signOut: onClick event");
     };
     return (
         <HeaderContainer>
@@ -93,7 +90,6 @@ const HeaderSearch = styled.div`
     }
 `;
 
-
 const HeaderRight = styled.div`
     flex: 0.3;
     display: flex;
@@ -103,5 +99,4 @@ const HeaderRight = styled.div`
         margin-left : auto;
         margin-right: 20px;
     }
-
 `

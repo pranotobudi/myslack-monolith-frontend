@@ -8,14 +8,10 @@ export default function Message({message, timestamp, username, userImage}) {
             <img src={userImage} alt="" />
             <MessageInfo>
                 <h4>
-                    {/* firestore timestamp */}
-                    {/* {username} <span>{new Date(timestamp?.toDate()).toUTCString()}</span> */}
-                    {/* backend data mongoDB timestamp */}
                     {username} <span>{new Date(timestamp).toUTCString()}</span>
                 </h4>
                 <p>{message}</p>            
             </MessageInfo>
-
         </MessageContainer>
     
     )

@@ -1,52 +1,23 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '@mui/material';
-import { firebaseConfig } from '../firebase';
-import { initializeApp } from "firebase/app";
-import { collection, addDoc, doc, getDoc, getFirestore, Timestamp } from "firebase/firestore"; 
 import { useSelector } from "react-redux"
 import { selectRoomId, selectRoomName } from '../features/appSlice'
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
 
 export default function ChatInput({channelName, channelId, chatRef, websocket, userMongo}) {
+    const [user] = useAuthState(auth);
     const [input, setInput] = useState("");
     const roomId = useSelector(selectRoomId);
     const roomName = useSelector(selectRoomName);
+
     console.log("ChatInput-selectRoomId: ", roomId);    
     console.log("ChatInput-channelName: ", channelName);    
     console.log("ChatInput-channelId: ", channelId);    
     console.log("ChatInput-websocket: ", websocket);    
     console.log("ChatInput-userMongo: ", userMongo);    
 
-    const [user] = useAuthState(auth);
-
-    // Initialize Firebase
-    // const app = initializeApp(firebaseConfig);
-    // const db = getFirestore(app);
-
-
-    // const docRef = doc(db, "rooms", channelId);
-    // const docSnap = await getDoc(docRef);
-    
-    // await setDoc(doc(db, "cities", "new-city-id"), data);
-    // const addDocToFirebase = async (e) => {
-    //     channelId=roomId
-    //     console.log("input: ", input)
-    //     console.log("channelID: ", channelId)
-    //     try {
-    //         const docRef = await addDoc(collection(db, "rooms", channelId.toString(), "messages"), {
-    //             message: input,
-    //             timestamp: Timestamp.now(),
-    //             username:user.displayName,
-    //             userImage: user.photoURL,
-    //             //"https://randomuser.me/api/portraits/men/17.jpg"
-    //         });
-    //         console.log("Document written with ID: ", docRef.id);
-    //     } catch (e) {
-    //         console.error("Error adding document: ", e);
-    //     }
-    // }
 
     const sendToBackend = () => {
         console.log("inside sendToBackend...")
@@ -74,9 +45,7 @@ export default function ChatInput({channelName, channelId, chatRef, websocket, u
             return false;
         }
         
-        // addDocToFirebase();
         sendToBackend();
-        // websocket.send(JSON.stringify({"client_id": user.email, "text": input, "room_id": channelName}));
 
         chatRef.current.scrollIntoView({
             behavior: "smooth",

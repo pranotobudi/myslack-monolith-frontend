@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import SidebarOption from './SidebarOption.js';
 import styled from 'styled-components';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
@@ -13,25 +13,14 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
-import { useCollection } from 'react-firebase-hooks/firestore'
-// import { firebaseConfig } from '../firebase';
-// import { initializeApp } from "firebase/app";
-import { collection, getFirestore } from "firebase/firestore"; 
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "../firebase";
+import { auth } from "../firebase";
 
 export default function Sidebar({websocket, userMongo}) {
-    // Initialize Firebase
-    // const app = initializeApp(firebaseConfig);
-    // const db = getFirestore(app);
     console.log("Sidebar comp")
-    // const [channels, loading, error] = useCollection(
-    //     collection(db, 'rooms'),
-    //     {
-    //       snapshotListenOptions: { includeMetadataChanges: true },
-    //     }
-    //   );
+
     const [channels, updateChannels] = React.useState([]);
+    const [user] = useAuthState(auth);
  
     React.useEffect(function effectFunction() {
         async function fetchChannels(){
@@ -44,25 +33,7 @@ export default function Sidebar({websocket, userMongo}) {
     }, []); // This empty array represents an empty list of dependencies
  
 
-    //   const response = fetch(`${process.env.REACT_APP_EXTERNAL_HOST}/rooms`)
-    //   .then(res=>res.json())
-    //   .then((responseJson)=>{
-    //     updateChannels(responseJson["data"])
-    //     // channels = responseJson["data"]
-    //     // console.log("response: ", responseJson)
-    //     // console.log("response: ", channels)
-    //   })
-    //   .catch((error)=>{
-    //     console.log(error)
-    //   })
-
-    const [user] = useAuthState(auth);
  
-    //   channels.docs.map((doc) => {
-    //     console.log(doc.data().name)
-    // })
-    
-
     return (
         <SidebarContainer>
             <SidebarHeader>
@@ -90,23 +61,8 @@ export default function Sidebar({websocket, userMongo}) {
             <hr />
             <SidebarOption Icon={AddIcon} addChannelOption title="Add Channel"  />
 
-            {/* {channels?.docs.map((doc) => {
-                <SidebarOption key={doc.id} id={doc.id} addChannelOption title={doc.data().name}  />
-            })} */}
-            {/* execute if channels available, because it is async, will throw error if not availables */}
-            {/* this is to handle firebase connection */}
-            {/* {channels?.docs.map((doc) => (
-                // console.log(doc.id);
-                // console.log(doc.data().name);
-                // roomName and title share the same data;
-                <SidebarOption key={doc.id} id={doc.id} roomName={doc.get("name")}  title={doc.data().name}  />
-            ))} */}
-
-            {/* this is to handle backend connection */}
-            {(!channels.length)?<>abc</>:channels.map((room) => (
-                // console.log(doc.id);
-                // console.log(doc.data().name);
-                // roomName and title share the same data;
+            {/* this is to handle rooms from backend connection */}
+            {(!channels.length)?<></>:channels.map((room) => (
                 <SidebarOption key={room.id} id={room.id} roomName={room.name}  title={room.name}  />
             ))}
             

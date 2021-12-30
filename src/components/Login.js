@@ -4,7 +4,6 @@ import { Button } from '@mui/material';
 import { auth, provider, signInWithPopup } from '../firebase';
 
 export default function Login() {
-    // Initialize Firebase
 
     const signIn = (e) => {
         e.preventDefault(); // prevent Refresh

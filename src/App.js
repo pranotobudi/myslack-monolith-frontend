@@ -1,15 +1,11 @@
+import './App.css';
 import React from 'react';
 import styled from 'styled-components';
-import './App.css';
 import Header from './components/Header.js';
 import Sidebar from './components/Sidebar.js';
 import Chat from './components/Chat.js';
 import Login from './components/Login.js';
-import {
-  BrowserRouter,
-  Routes,
-  Route,  
-} from "react-router-dom";
+import { BrowserRouter,  Routes, Route } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from './firebase';
 import Spinner from 'react-spinkit'
@@ -17,19 +13,11 @@ import {appendMessage} from "./features/appSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { selectRoomId } from './features/appSlice'
 
-// import your route components too
-
-// function Welcome() {
-//   return <h1>Hello,</h1>;
-// }
-
 function App() {
-  const [user, loading] =useAuthState(auth);
-
+  const [user, loading] = useAuthState(auth);
   const [userMongo, updateUserMongo] = React.useState();
-  // const [newMsg, updateNewMsg] = React.useState();
-  const dispatch = useDispatch();
   const roomId = useSelector(selectRoomId);
+  const dispatch = useDispatch();
 
   React.useEffect(function effectFunction() {
       async function fetchUser(){
@@ -46,8 +34,7 @@ function App() {
       fetchUser();
   }, [user]); 
   // second parameter is dependency: effect will activate if the value in the list change
-  // var currentDate = new Date()
-  console.log("CURRENT TIME: ", new Date().toISOString())  
+
   var conn
   function dial() {
     conn = new WebSocket("ws://localhost:8080/websocket")
@@ -63,7 +50,6 @@ function App() {
       console.info("websocket connected");
       console.log("inside sendUserInfo...")
       try {
-          // conn.send(JSON.stringify({"client_id": user.email, "text": "[USERINFO]", "room_id": ""}));
           conn.send(JSON.stringify({
             "message": "[USERINFO]",
             "room_id": "",
@@ -91,47 +77,12 @@ function App() {
         newMsg: JSON.parse(ev.data),
       }))
 
-      // updateNewMsg(JSON.parse(ev.data))
       console.log("Incoming Data:", JSON.parse(ev.data))
 
     })
   }
   dial()
-  // async function sendClientAuth(context){
-  //   const requestOptions = {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ title: 'React POST Request Example' })
-  //   };
-  //   fetch('https://reqres.in/api/posts', requestOptions)
-  //       .then(response => response.json())
-  //       .then(data => this.setState({ postId: data.id }));
-  
-  //     var products
-  //     const response = await fetch(`${process.env.EXTERNAL_HOST}/api/v1/products`)
-  //     .then(res=>res.json())
-  //     .then((responseJson)=>{
-  //       products = responseJson["data"]
-  //     })
-  //     .catch((error)=>{
-  //       products=[]
-  //       console.log(error)
-    
-  //     });
-    
-    
-  //     console.log("PRODUCTS: ", products)
-      
-    
-  //     // const products = myDummyProducts
-  //     return {
-  //       props: {
-  //         products,
-  //       },
-  //     };
-  //   }
 
-  console.log("App comp")
   if (loading){
     return (
       <AppLoading>
@@ -166,9 +117,6 @@ function App() {
       </>
       )}
     </BrowserRouter>
-
-
-      {/* Let's build slack! */}
     </div>
   );
 }
@@ -199,5 +147,4 @@ const AppLoadingContents = styled.div`
     height: 200px;
     padding: 20px;    
   }
-
 `;
