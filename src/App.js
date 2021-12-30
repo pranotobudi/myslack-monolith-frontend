@@ -31,7 +31,7 @@ function App() {
           console.log("response messages : ", json["data"])
           updateUserMongo(json["data"]);
       }
-      fetchUser();
+      user && fetchUser();
   }, [user]); 
   // second parameter is dependency: effect will activate if the value in the list change
 
@@ -50,7 +50,7 @@ function App() {
       console.info("websocket connected");
       console.log("inside sendUserInfo...")
       try {
-          conn.send(JSON.stringify({
+          user && userMongo && conn.send(JSON.stringify({
             "message": "[USERINFO]",
             "room_id": "",
             "user_id": userMongo.id,

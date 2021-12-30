@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 export default function Message({message, timestamp, username, userImage}) {
-    console.log("Message component message: ", message, " timestamp: ", timestamp, " username: ", username, " userImage: ", userImage);
+    // console.log("Message component message: ", message, " timestamp: ", timestamp, " username: ", username, " userImage: ", userImage);
     return (
         <MessageContainer>
             <img src={userImage} alt="" />

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from "styled-components";
 import InfoIcon from '@mui/icons-material/Info';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
@@ -26,7 +26,9 @@ export default function Chat({websocket, userMongo, newMsg}) {
                     roomId: roomId,
                 }))        
             }
-            if (roomMessages[roomId].length === 0){
+            // if (roomMessages[roomId].length === 0){
+            if (roomMessages[roomId] == null){
+                    // if (roomId in roomMessages[].length === 0){
 
                 var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/messages`)
                 var params = {room_id:roomId}
@@ -37,31 +39,45 @@ export default function Chat({websocket, userMongo, newMsg}) {
                 const json = await response.json();
                 console.log("response messages : ", json["data"])
 
-                json["data"].map((msg)=>{
-                    console.log(`json["data"].map(msg): `, msg)
-                    dispatch(appendMessage({
-                        roomId: roomId, 
-                        newMsg: msg,
-                    }))        
-                })
+                
+                json["data"] && json["data"].map((msg)=>{
+                        console.log(`json["data"].map(msg): `, msg)
+                        dispatch(appendMessage({
+                            roomId: roomId, 
+                            newMsg: msg,
+                        }))        
+                })    
+                
             }    
         }
         fetchMessages();
     }, [roomId, dispatch, roomMessages]); 
     // second parameter is dependency: effect will activate if the value in the list change
+
+    // scroll view
     useEffect(()=>{
+        console.log("Chat.js - INSIDE useEffect - useRef ")
+        // chatRef?.current?.scrollIntoView({
+        //     behavior: "smooth",
+        // });
+        // chatRef.current
+        // chatRef.current.scrollIntoView({
+        //     behavior: "smooth",
+        // });
+        
         chatRef?.current?.scrollIntoView({
             behavior: "smooth",
         });
-    }, [roomId]);
+    }, );
+// }, [roomId]); // with this line, first loading component doesn't executed because roomId not available, this case nothing to do with roomId. 
 
     // update RoomMessages for new incoming message
-    useEffect(function effectFunction(){
-        function attachMessage(){
-            console.log("newMsg useEffect newMsg: ", newMsg)
-        }
-        attachMessage()
-    }, [newMsg]);
+    // useEffect(function effectFunction(){
+    //     function attachMessage(){
+    //         console.log("newMsg useEffect newMsg: ", newMsg)
+    //     }
+    //     attachMessage()
+    // }, [newMsg]);
       
 
     return (
@@ -93,7 +109,7 @@ export default function Chat({websocket, userMongo, newMsg}) {
                         // roomMessages could be undefined because async, 
                         // so only executed if available, otherwise it will throw error
                         roomMessages[roomId]?.map((chat) => {
-                            console.log("Chat.js chat: ", chat)
+                            // console.log("Chat.js chat: ", chat)
                             return (
                                 <Message 
                                     key={chat["id"]}
