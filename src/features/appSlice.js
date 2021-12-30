@@ -5,6 +5,7 @@ export const appSlice = createSlice({
   initialState: {
     roomId: null,
     roomName: "",
+    roomMessages: [],
     
   },
   // The `reducers` field lets us define reducers and generate associated actions
@@ -16,18 +17,28 @@ export const appSlice = createSlice({
       // immutable state based off those changes
       state.roomId = action.payload.roomId;
       state.roomName = action.payload.roomName;
-      console.log("appSlice-state.roomId: "+state.roomId)
-      console.log("appSlice-state.roomName: "+state.roomName)
+      console.log("appSlice-state.roomId: " + state.roomId)
+      console.log("appSlice-state.roomName: " + state.roomName)
+    },
+    appendMessage: (state, action) => {
+      // Redux Toolkit allows us to write "mutating" logic in reducers. It
+      // doesn't actually mutate the state because it uses the Immer library,
+      // which detects changes to a "draft state" and produces a brand new
+      // immutable state based off those changes
+      state.roomMessages.push(action.payload.newMsg);
+      console.log("appSlice-state.roomMessages: " + state.roomMessages.toString())
+      // console.log("appSlice-state.roomName: "+state.roomName)
     },
   },
 });
 
-export const { enterRoom } = appSlice.actions;
+export const { enterRoom, appendMessage } = appSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectRoomId = (state) => state.app.roomId;
 export const selectRoomName = (state) => state.app.roomName;
+export const selectRoomMessage = (state) => state.app.roomMessages;
 
 export default appSlice.reducer;

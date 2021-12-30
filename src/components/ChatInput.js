@@ -22,8 +22,8 @@ export default function ChatInput({channelName, channelId, chatRef, websocket, u
     const [user] = useAuthState(auth);
 
     // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // const app = initializeApp(firebaseConfig);
+    // const db = getFirestore(app);
 
 
     // const docRef = doc(db, "rooms", channelId);

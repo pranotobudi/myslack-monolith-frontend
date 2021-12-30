@@ -9,19 +9,23 @@ import { initializeApp } from "firebase/app";
 import { collection, doc, getDoc, getDocs, getFirestore, Timestamp, query, orderBy } from "firebase/firestore"; 
 import {useCollection, useDocument} from "react-firebase-hooks/firestore";
 import { useSelector } from "react-redux"
-import { selectRoomId, selectRoomName } from '../features/appSlice'
+import { selectRoomId, selectRoomName, selectRoomMessage } from '../features/appSlice'
+import {appendMessage} from "../features/appSlice";
+import { useDispatch } from "react-redux";
 
-
-export default function Chat({websocket, userMongo}) {
+export default function Chat({websocket, userMongo, newMsg}) {
+    const dispatch = useDispatch();
     const chatRef = useRef(null);
     const roomId = useSelector(selectRoomId);
     const roomName = useSelector(selectRoomName);
+    const roomMessages = useSelector(selectRoomMessage);
     console.log("Chat-selectRoomId: ", roomId);
     console.log("Chat-selectRoomName: ", roomName);
+    console.log("Chat-New Incoming Message: ", newMsg);
 
     // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // const app = initializeApp(firebaseConfig);
+    // const db = getFirestore(app);
 
         // snapshotListen is a listener for real-time event update in the firestore
     // const [roomMessages, loading, error] = useCollection(
@@ -39,7 +43,7 @@ export default function Chat({websocket, userMongo}) {
     // second parameter is dependency: effect will activate if the value in the list change
     // console.log(roomMessages);
 
-    const [roomMessages, updateRoomMessages] = React.useState([]);
+    // const [roomMessages, updateRoomMessages] = React.useState([]);
  
     React.useEffect(function effectFunction() {
         async function fetchMessages(){
@@ -51,7 +55,23 @@ export default function Chat({websocket, userMongo}) {
             const response = await fetch(url);
             const json = await response.json();
             console.log("response messages : ", json["data"])
-            updateRoomMessages(json["data"]);
+
+            // var httpMessages = json["data"].slice()
+            // if(JSON.stringify(newMsg) !== '{}'){
+            //     httpMessages.push(newMsg) 
+            //     console.log("APPEND newMsg: ", httpMessages)
+            // }
+
+            // updateRoomMessages(httpMessages);
+            // updateRoomMessages(json["data"]);
+            json["data"].map((msg)=>{
+                console.log(`json["data"]: `, msg)
+                dispatch(appendMessage({
+                    newMsg: msg,
+                }))
+    
+            })
+        
         }
         fetchMessages();
     }, [roomId]); 
@@ -61,7 +81,32 @@ export default function Chat({websocket, userMongo}) {
             behavior: "smooth",
         });
     }, [roomId]);
-    
+
+    // update RoomMessages for new incoming message
+    useEffect(function effectFunction(){
+        function attachMessage(){
+            console.log("newMsg useEffect newMsg: ", newMsg)
+            // console.log("newMsg useEffect newMsg: ", roomMessages)
+            // roomMessages.push(newMsg)
+            // updateRoomMessages(newMsg)
+        }
+        attachMessage()
+        // roomMessages.push(newMsg)
+        // console.log("newMsg useEffect update: ", roomMessages)
+    }, [newMsg]);
+      
+    // const pushNewMsgToRoomMessages = ()=>{
+    //     if (roomMessages && newMsg) {
+    //         var updatedRoomMessages = roomMessages.slice()
+    //         updatedRoomMessages.push(newMsg)
+    //         console.log("updatedRoomMessages: ", updatedRoomMessages)
+    //         // updateRoomMessages(updatedRoomMessages)
+    //     }
+    // };
+    // pushNewMsgToRoomMessages()
+
+    // second parameter is dependency: effect will activate if the value in the list change
+
     return (
         <ChatContainer>
             {roomId && roomName && (
@@ -105,6 +150,10 @@ export default function Chat({websocket, userMongo}) {
                         // <p>{roomMessages.length}</p>
                     } */}
                     {/* this to handle backend data */}
+                    {
+                        roomMessages?<>Yes available</>:<>Not availabe</>
+                            
+                    }
                     { 
                         // roomMessages could be undefined because async, 
                         // so only executed if available, otherwise it will throw error
@@ -114,6 +163,7 @@ export default function Chat({websocket, userMongo}) {
                             // const chatMessage = {id:doc.id, message:message, timestamp:timestamp, user:user, userImage:userImage};
                             // console.log("CHAT - ChatMessages id: ", chat.id)
                             // console.log("id: ", chat.id, "userImage: ", userImage);
+                            console.log("Chat.js chat: ", chat)
                             return (
                                 <Message 
                                     key={chat["id"]}

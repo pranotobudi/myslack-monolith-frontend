@@ -13,6 +13,9 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from './firebase';
 import Spinner from 'react-spinkit'
+import {appendMessage} from "./features/appSlice";
+import { useDispatch } from "react-redux";
+
 // import your route components too
 
 // function Welcome() {
@@ -23,7 +26,9 @@ function App() {
   const [user, loading] =useAuthState(auth);
 
   const [userMongo, updateUserMongo] = React.useState();
- 
+  // const [newMsg, updateNewMsg] = React.useState();
+  const dispatch = useDispatch();
+
   React.useEffect(function effectFunction() {
       async function fetchUser(){
           var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/userByEmail`)
@@ -79,7 +84,12 @@ function App() {
         console.log("============================================")
         return
       }
-      console.log(ev.data)
+      dispatch(appendMessage({
+        newMsg: JSON.parse(ev.data),
+      }))
+
+      // updateNewMsg(JSON.parse(ev.data))
+      console.log("Incoming Data:", JSON.parse(ev.data))
 
     })
   }
