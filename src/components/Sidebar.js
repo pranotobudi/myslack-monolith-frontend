@@ -73,7 +73,8 @@ export default function Sidebar({websocket, userMongo}) {
 const SidebarContainer = styled.div`
     color: white;
     background-color: var(--slack-color);
-    flex: 0.3;
+    flex: 0.3; 
+    /* flex: 0.3; md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 */
     border-top: 1px solid #49274b;
     max-width: 260px;
     margin-top: 46px;

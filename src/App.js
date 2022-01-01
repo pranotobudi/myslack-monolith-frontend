@@ -9,14 +9,15 @@ import { BrowserRouter,  Routes, Route } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from './firebase';
 import Spinner from 'react-spinkit'
-import {appendMessage} from "./features/appSlice";
+import {appendMessage, updateUserMongo } from "./features/appSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { selectRoomId } from './features/appSlice'
+import { selectRoomId, selectUserMongo } from './features/appSlice'
 
 function App() {
   const [user, loading] = useAuthState(auth);
-  const [userMongo, updateUserMongo] = React.useState();
+  // const [userMongo, updateUserMongo] = React.useState();
   const roomId = useSelector(selectRoomId);
+  const userMongo = useSelector(selectUserMongo);
   const dispatch = useDispatch();
 
   React.useEffect(function effectFunction() {
@@ -42,10 +43,14 @@ function App() {
           const response = await fetch(url, requestOptions);
           const json = await response.json();
           console.log("response messages : ", json["data"])
-          updateUserMongo(json["data"]);
+          // updateUserMongo(json["data"]);
+          dispatch(updateUserMongo({
+            userMongo: json["data"],
+          })) 
+
       }
       user && fetchUser();
-  }, [user]); 
+  }, [user, dispatch]); 
   // second parameter is dependency: effect will activate if the value in the list change
 
   var conn
@@ -124,7 +129,7 @@ function App() {
         <AppBody>
           <Sidebar websocket={conn} userMongo={userMongo} />
           <Routes>
-              <Route path="/" element={<Chat websocket={conn} userMongo={userMongo} />} />
+              <Route path="/" element={<Chat websocket={conn} />} />
           </Routes>
         </AppBody>
       </>

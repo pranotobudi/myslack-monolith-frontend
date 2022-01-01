@@ -6,7 +6,7 @@ export const appSlice = createSlice({
     roomId: null,
     roomName: "",
     roomMessages: {},
-    
+    userMongo: {},
   },
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
@@ -30,10 +30,10 @@ export const appSlice = createSlice({
       if (state.roomMessages.hasOwnProperty(action.payload.roomId)){
         state.roomMessages[action.payload.roomId].push(action.payload.newMsg);
       }
-      console.log("appSlice-state.roomMessages payload roomId: " + action.payload.roomId)
-      console.log("appSlice-state.roomMessages payload newMsg: " + action.payload.newMsg)
-      console.log("appSlice-state.roomMessages ", action.payload.roomId)
-      console.log(state.roomMessages[action.payload.roomId])
+      // console.log("appSlice-state.roomMessages payload roomId: " + action.payload.roomId)
+      // console.log("appSlice-state.roomMessages payload newMsg: " + action.payload.newMsg)
+      // console.log("appSlice-state.roomMessages ", action.payload.roomId)
+      // console.log(state.roomMessages[action.payload.roomId])
     },
     createRoom: (state, action) => {
       // Redux Toolkit allows us to write "mutating" logic in reducers. It
@@ -43,11 +43,19 @@ export const appSlice = createSlice({
       state.roomMessages[action.payload.roomId] = []
       console.log("appSlice-state.createRoom: ", state.roomMessages[action.payload.roomId])
     },
+    updateUserMongo: (state, action) => {
+      // Redux Toolkit allows us to write "mutating" logic in reducers. It
+      // doesn't actually mutate the state because it uses the Immer library,
+      // which detects changes to a "draft state" and produces a brand new
+      // immutable state based off those changes
+      state.userMongo = action.payload.userMongo
+      // console.log("appSlice-state.updateUserMongo: ", state.userMongo)
+    },
 
   },
 });
 
-export const { enterRoom, createRoom, appendMessage } = appSlice.actions;
+export const { enterRoom, createRoom, appendMessage, updateUserMongo } = appSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -55,5 +63,6 @@ export const { enterRoom, createRoom, appendMessage } = appSlice.actions;
 export const selectRoomId = (state) => state.app.roomId;
 export const selectRoomName = (state) => state.app.roomName;
 export const selectRoomMessage = (state) => state.app.roomMessages;
+export const selectUserMongo = (state) => state.app.userMongo;
 
 export default appSlice.reducer;
