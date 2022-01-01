@@ -57,28 +57,11 @@ export default function Chat({websocket, userMongo, newMsg}) {
     // scroll view
     useEffect(()=>{
         console.log("Chat.js - INSIDE useEffect - useRef ")
-        // chatRef?.current?.scrollIntoView({
-        //     behavior: "smooth",
-        // });
-        // chatRef.current
-        // chatRef.current.scrollIntoView({
-        //     behavior: "smooth",
-        // });
-        
         chatRef?.current?.scrollIntoView({
             behavior: "smooth",
         });
     }, );
-// }, [roomId]); // with this line, first loading component doesn't executed because roomId not available, this case nothing to do with roomId. 
-
-    // update RoomMessages for new incoming message
-    // useEffect(function effectFunction(){
-    //     function attachMessage(){
-    //         console.log("newMsg useEffect newMsg: ", newMsg)
-    //     }
-    //     attachMessage()
-    // }, [newMsg]);
-      
+// }, [roomId]); // with this line, first loading component doesn't executed because roomId not available, this case nothing to do with roomId.       
 
     return (
         <ChatContainer>

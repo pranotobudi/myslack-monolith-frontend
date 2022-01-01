@@ -21,12 +21,25 @@ function App() {
 
   React.useEffect(function effectFunction() {
       async function fetchUser(){
-          var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/userByEmail`)
-          var params = {email:user.email}
-          console.log("App.js - email", user.email)
-          url.search = new URLSearchParams(params).toString();
-              
-          const response = await fetch(url);
+          // var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/userByEmail`)
+          var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/userAuth`)
+          // var params = {
+          //   email: user.email,
+          //   user_image: user.photoURL,
+          // }
+          // console.log("App.js - email", user.email, " user_image: ", user.photoURL)
+          // url.search = new URLSearchParams(params).toString();
+
+          const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: user.email,
+              user_image: user.photoURL,
+            })
+          };
+
+          const response = await fetch(url, requestOptions);
           const json = await response.json();
           console.log("response messages : ", json["data"])
           updateUserMongo(json["data"]);
