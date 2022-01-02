@@ -21,6 +21,19 @@ function App() {
   const dispatch = useDispatch();
 
   React.useEffect(function effectFunction() {
+    async function fetchRootDomain(){
+        // this function actually no use, just for testing
+        var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}`)
+        const response = await fetch(url);
+        const json = await response.json();
+        console.log("response messages : ", json["data"])
+
+    }
+    user && fetchRootDomain();
+  }, [user]); 
+  // second parameter is dependency: effect will activate if the value in the list change
+
+  React.useEffect(function effectFunction() {
       async function fetchUser(){
           // var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/userByEmail`)
           var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/userAuth`)
@@ -55,7 +68,8 @@ function App() {
 
   var conn
   function dial() {
-    conn = new WebSocket("ws://localhost:8080/websocket")
+    // conn = new WebSocket("ws://localhost:8080/websocket")
+    conn = new WebSocket(`${process.env.REACT_APP_WEBSOCKET_EXTERNAL_HOST}`)
 
     conn.addEventListener("close", ev => {
       console.log(`WebSocket Disconnected code: ${ev.code}, reason: ${ev.reason}`, true)

@@ -7,12 +7,12 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyASEsL_Ck6W-bHb6LXR70b5RkntFiObnlU",
-  authDomain: "react-slack-clone-38eb9.firebaseapp.com",
-  projectId: "react-slack-clone-38eb9",
-  storageBucket: "react-slack-clone-38eb9.appspot.com",
-  messagingSenderId: "150435556248",
-  appId: "1:150435556248:web:b539ba81ad383554b6d9ed"
+  apiKey: "AIzaSyBrawPj0E7YlcuLtY7HVdB63d-dEI0RG5M",
+  authDomain: "myslack-pranotobudi.firebaseapp.com",
+  projectId: "myslack-pranotobudi",
+  storageBucket: "myslack-pranotobudi.appspot.com",
+  messagingSenderId: "694668255647",
+  appId: "1:694668255647:web:f228a6b8a7e41bb9bc5daa"
 };
   
 // Initialize Firebase

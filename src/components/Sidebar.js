@@ -47,7 +47,7 @@ export default function Sidebar({websocket, userMongo}) {
                 </SidebarInfo>
                 <CreateIcon />
             </SidebarHeader>
-
+{/* 
             <SidebarOption Icon={InsertCommentIcon} title="Threads" />
             <SidebarOption Icon={InboxIcon} title="Mentions & Reactions" />
             <SidebarOption Icon={DraftsIcon} title="Saved Items" />
@@ -56,7 +56,7 @@ export default function Sidebar({websocket, userMongo}) {
             <SidebarOption Icon={AppsIcon} title="Apps" />
             <SidebarOption Icon={FileCopyIcon} title="File Browser" />
             <SidebarOption Icon={ExpandLessIcon} title="Show Less" />
-            <hr />
+            <hr /> */}
             <SidebarOption Icon={ExpandMoreIcon} title="Channels" />
             <hr />
             <SidebarOption Icon={AddIcon} addChannelOption title="Add Channel"  />
