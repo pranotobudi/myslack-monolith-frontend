@@ -78,14 +78,18 @@ export default function Chat({websocket, newMsg}) {
 
     const updateUserRooms = async () => {
         // update user room with new join room
-        var newRooms = [...userMongo.rooms]
+        let newRooms
+        if (userMongo.rooms){
+            newRooms = [...userMongo.rooms]
+        }else{
+            newRooms = []
+        }
         console.log("inside updateUserRooms, userMongoRooms: ", userMongo.rooms)
         console.log("inside updateUserRooms, newRooms: ", newRooms)
         newRooms.indexOf(roomId) === -1 ? newRooms.push(roomId) : console.log("This item already exists");
         // newRooms.push(roomId)
         console.log("inside updateUserRooms, updated newRooms: ", newRooms)
-        console.log("inside updateUserRooms, roomId: ", roomId, " userMongo.roomId: ", userMongo.rooms[0])
-
+        
         var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/updateUserRooms`)
         const requestOptions = {
         method: 'PUT',
@@ -111,7 +115,7 @@ export default function Chat({websocket, newMsg}) {
 
     return (
         <ChatContainer>
-            {roomId && roomName && roomMessages && (
+            {roomId && roomName && roomMessages &&  (
                 <>
                     <Header>
                         <HeaderLeft>
@@ -128,7 +132,12 @@ export default function Chat({websocket, newMsg}) {
                         </HeaderRight>
         
                     </Header>
-                    {userMongo.rooms.indexOf(roomId) === -1 ?(
+                    {/* 
+                        condition: 
+                        user don't have rooms at all OR 
+                        have room but don't have this specific room 
+                    */}
+                    {(!userMongo.rooms || userMongo.rooms.indexOf(roomId) === -1) ?(
                         <JoinButton>
                             <Button type="submit" onClick={updateUserRooms}>
                             Join This Room
