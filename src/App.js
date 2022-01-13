@@ -24,6 +24,7 @@ function App() {
     async function fetchRootDomain(){
         // this function actually no use, just for testing
         var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}`)
+        console.log("process.env.REACT_APP_EXTERNAL_HOST : ", process.env.REACT_APP_EXTERNAL_HOST)
         const response = await fetch(url);
         const json = await response.json();
         console.log("response messages : ", json["data"])
@@ -70,7 +71,7 @@ function App() {
   function dial() {
     // conn = new WebSocket("ws://localhost:8080/websocket")
     conn = new WebSocket(`${process.env.REACT_APP_WEBSOCKET_EXTERNAL_HOST}`)
-
+    console.log("process.env.REACT_APP_WEBSOCKET_EXTERNAL_HOST", process.env.REACT_APP_WEBSOCKET_EXTERNAL_HOST)
     conn.addEventListener("close", ev => {
       console.log(`WebSocket Disconnected code: ${ev.code}, reason: ${ev.reason}`, true)
       if (ev.code !== 1001) {
