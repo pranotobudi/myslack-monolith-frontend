@@ -53,7 +53,7 @@ function App() {
               user_image: user.photoURL,
             })
           };
-
+          console.log("userAuth requestionOptions body:", requestOptions.body)
           const response = await fetch(url, requestOptions);
           const json = await response.json();
           console.log("response messages : ", json["data"])
