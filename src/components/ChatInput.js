@@ -26,8 +26,8 @@ export default function ChatInput({channelName, channelId, chatRef, websocket, u
                 "message": input,
                 "room_id": roomId,
                 "user_id": userMongo.id,
-                "username":user.displayName,
-                "user_image": user.photoURL,
+                "username":userMongo.username,
+                "user_image": userMongo.user_image,
                 "timestamp": new Date().toISOString(),
             }));
         } catch (e) {

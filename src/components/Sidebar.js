@@ -31,10 +31,8 @@ export default function Sidebar({websocket, userMongo}) {
             console.log("response: ", json["data"])
         }
         fetchChannels();
-    }, []); // This empty array represents an empty list of dependencies
- 
-
- 
+    }, [user]); // This empty array represents an empty list of dependencies
+  
     return (
         <SidebarContainer>
             <SidebarHeader>
@@ -43,7 +41,7 @@ export default function Sidebar({websocket, userMongo}) {
                     <h3>
                         <FiberManualRecordIcon />
                         {/* Pranoto Budi */}
-                        {user.displayName}
+                        {user?user.displayName:"Guest"}
                     </h3>
                 </SidebarInfo>
                 <CreateIcon />
