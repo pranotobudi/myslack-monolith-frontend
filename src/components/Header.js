@@ -5,25 +5,46 @@ import SearchIcon from '@mui/icons-material/Search';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { Avatar } from '@mui/material';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase";
+import { auth, provider, signInWithPopup } from "../firebase";
+import { updateUserMongo } from "../features/appSlice";
+import { useDispatch } from "react-redux";
 
 export default function Header() {
     console.log("Header comp")
 
+    const dispatch = useDispatch();
     const [user] = useAuthState(auth);
+    const signInHandler = (e) => {
+        e.preventDefault(); // prevent Refresh
+        signInWithPopup(auth, provider).catch((error)=>alert(error.message));
+    };
+
     const signOutHandler = (e) => {
         auth.signOut();
         console.log("signOut: onClick event");
+        dispatch(updateUserMongo({
+            userMongo: {},
+          }))
     };
     return (
         <HeaderContainer>
             {/* Header Left */}
             <HeaderLeft>
-                <HeaderAvatar 
+                {user?<>
+                    <HeaderAvatar 
                     onClick={signOutHandler} 
                     alt={user?.displayName} 
                     src={user?.photoURL} 
-                />
+                    />                
+                </>
+                :
+                <>
+                    <HeaderAvatar 
+                    onClick={signInHandler} 
+                    alt={user?.displayName} 
+                    src={user?.photoURL} 
+                    />                
+                </>}
                 <AccessTimeIcon />
             </HeaderLeft>
             {/* Header Search */}

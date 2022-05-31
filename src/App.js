@@ -4,17 +4,18 @@ import styled from 'styled-components';
 import Header from './components/Header.js';
 import Sidebar from './components/Sidebar.js';
 import Chat from './components/Chat.js';
-import Login from './components/Login.js';
+// import Login from './components/Login.js';
 import { BrowserRouter,  Routes, Route } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from './firebase';
-import Spinner from 'react-spinkit'
+// import Spinner from 'react-spinkit'
 import {appendMessage, updateUserMongo } from "./features/appSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { selectRoomId, selectUserMongo } from './features/appSlice'
 
 function App() {
-  const [user, loading] = useAuthState(auth);
+  // const [user, loading] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   // const [userMongo, updateUserMongo] = React.useState();
   const roomId = useSelector(selectRoomId);
   const userMongo = useSelector(selectUserMongo);
@@ -35,38 +36,61 @@ function App() {
   // second parameter is dependency: effect will be activated if the value in the list change
 
   React.useEffect(function effectFunction() {
-      async function fetchUser(){
-          // var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/userByEmail`)
-          var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/userAuth`)
-          // var params = {
-          //   email: user.email,
-          //   user_image: user.photoURL,
-          // }
-          // console.log("App.js - email", user.email, " user_image: ", user.photoURL)
-          // url.search = new URLSearchParams(params).toString();
-
-          const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: user.email,
-              user_image: user.photoURL,
-            })
-          };
-          console.log("userAuth requestionOptions body:", requestOptions.body)
-          const response = await fetch(url, requestOptions);
-          const json = await response.json();
-          console.log("response messages : ", json["data"])
-          // updateUserMongo(json["data"]);
-          dispatch(updateUserMongo({
-            userMongo: json["data"],
-          })) 
-
+    async function fetchUser(){
+      // var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/userByEmail`)
+      var url = new URL(`${process.env.REACT_APP_EXTERNAL_HOST}/userAuth`)
+      // var params = {
+      //   email: user.email,
+      //   user_image: user.photoURL,
+      // }
+      // console.log("App.js - email", user.email, " user_image: ", user.photoURL)
+      // url.search = new URLSearchParams(params).toString();
+      let userInfo = {};
+      if (user){
+        console.log("APP - email: ", user.email)
+        userInfo = {
+          email: user.email,
+          user_image: user.photoURL,
+        }
+      }else{
+        console.log("APP - email: guest")
+        userInfo = {
+          email: "guest@gmail.com",
+          user_image: "http://guestimage.png",
+        }
       }
-      user && fetchUser();
-  }, [user, dispatch]); 
-  // second parameter is dependency: effect will be activated if the value in the list change
+      const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userInfo)
+        };
+      console.log("userAuth requestionOptions body:", requestOptions.body)
+      const response = await fetch(url, requestOptions);
+      const json = await response.json();
+      console.log("response messages : ", json["data"])
+      // updateUserMongo(json["data"]);
+      if (user){
+        let preparedData = json["data"]
+        preparedData.username = user.displayName // the username is not sent by the backend
+        dispatch(updateUserMongo({
+          // userMongo: json["data"],
+          userMongo: preparedData,
+        }))  
+      }else{
+        let preparedData = json["data"]
+        preparedData.username = preparedData.email // the username is not sent by the backend
+        dispatch(updateUserMongo({
+          // userMongo: json["data"],
+          userMongo: preparedData,
+        }))  
+      }
 
+    }
+    
+    fetchUser();
+  }, [user, dispatch]);
+  // second parameter is dependency: effect will be activated if the value in the list change
+  
   var conn
   function dial() {
     // conn = new WebSocket("ws://localhost:8080/websocket")
@@ -83,12 +107,12 @@ function App() {
       console.info("websocket connected");
       console.log("inside sendUserInfo...")
       try {
-          user && userMongo && conn.send(JSON.stringify({
+          userMongo && conn.send(JSON.stringify({
             "message": "[USERINFO]",
             "room_id": "",
             "user_id": userMongo.id,
-            "username":user.displayName,
-            "user_image": user.photoURL,
+            "username":userMongo.username,
+            "user_image": userMongo.user_image,
             "timestamp": new Date().toISOString(),
         }));
 
@@ -116,30 +140,30 @@ function App() {
   }
   dial()
 
-  if (loading){
-    return (
-      <AppLoading>
-        <AppLoadingContents>
-          <img
-              src="https://cdn.cdnlogo.com/logos/s/40/slack-new.svg"
-              alt=""
-          />
-          <Spinner 
-            name="ball-spin-fade-loader"
-            color="purple"
-            fadeIn="none"
-          />
-        </AppLoadingContents>
-      </AppLoading>
-    )
-  }
+  // if (loading){
+  //   return (
+  //     <AppLoading>
+  //       <AppLoadingContents>
+  //         <img
+  //             src="https://cdn.cdnlogo.com/logos/s/40/slack-new.svg"
+  //             alt=""
+  //         />
+  //         <Spinner 
+  //           name="ball-spin-fade-loader"
+  //           color="purple"
+  //           fadeIn="none"
+  //         />
+  //       </AppLoadingContents>
+  //     </AppLoading>
+  //   )
+  // }
   return (
     <div className="App">
     <BrowserRouter>
-      {!user ?(
+      {/* {!user ?(
             <Login />
           ):(
-      <>
+      <> */}
         <Header />
         <AppBody>
           <Sidebar websocket={conn} userMongo={userMongo} />
@@ -147,8 +171,8 @@ function App() {
               <Route path="/" element={<Chat websocket={conn} />} />
           </Routes>
         </AppBody>
-      </>
-      )}
+      {/* </>
+      )} */}
     </BrowserRouter>
     </div>
   );
@@ -161,23 +185,23 @@ const AppBody = styled.div`
   height: 100vh;
 `;
 
-const AppLoading = styled.div`
-  display: grid;
-  place-items: center;
-  height: 100vh;
-  width: 100%;
-`;
+// const AppLoading = styled.div`
+//   display: grid;
+//   place-items: center;
+//   height: 100vh;
+//   width: 100%;
+// `;
 
-const AppLoadingContents = styled.div`
-  text-align: center;
-  padding-bottom: 100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+// const AppLoadingContents = styled.div`
+//   text-align: center;
+//   padding-bottom: 100px;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
 
-  > img{
-    height: 200px;
-    padding: 20px;    
-  }
-`;
+//   > img{
+//     height: 200px;
+//     padding: 20px;    
+//   }
+// `;

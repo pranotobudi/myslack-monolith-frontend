@@ -8,6 +8,8 @@ import Message from './Message';
 import { selectRoomId, selectRoomName, selectRoomMessage, selectUserMongo } from '../features/appSlice'
 import { createRoom, appendMessage, updateUserMongo } from "../features/appSlice";
 import { useSelector, useDispatch } from "react-redux";
+import { auth } from "../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Chat({websocket, newMsg}) {
     const dispatch = useDispatch();
@@ -16,6 +18,7 @@ export default function Chat({websocket, newMsg}) {
     const roomName = useSelector(selectRoomName);
     const roomMessages = useSelector(selectRoomMessage);
     const userMongo = useSelector(selectUserMongo);
+    const [user] = useAuthState(auth);
     console.log("Chat-selectRoomId: ", roomId);
     console.log("Chat-selectRoomName: ", roomName);
     console.log("Chat-New Incoming Message: ", newMsg);
@@ -63,7 +66,7 @@ export default function Chat({websocket, newMsg}) {
             }    
         }
         fetchMessages();
-    }, [roomId, dispatch, roomMessages]); 
+    }, [roomId, dispatch, roomMessages, user]); 
     // second parameter is dependency: effect will activate if the value in the list change
 
     // scroll view
